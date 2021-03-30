@@ -43,8 +43,8 @@ dependencies {
 Feature: sample feature
   Scenario: sample scenario
     Given given table
-    | no | name                      | date       |
-    | 1  | Independence Movement Day | 1919-03-01 |
+    | no | name                      | date       | refNo | regDt |
+    | 1  | Independence Movement Day | 1919-03-01 |       |       |
 ```
 
 ### Using DataTableWrap in step definition code
@@ -57,8 +57,10 @@ public class SampleStep {
         List<MapRowWrap> rows = table.getMapRows();
         MapRowWrap row = rows.get(0);
         Integer no = row.getInteger("no");
-        assertThat(no).isEqualTo(1);
-        String name = row.getString("name");   
+        String name = row.getString("name");
+        LocalDate date = row.getLocalDate("date", "yyyy-MM-dd");
+        Integer refno = row.getInteger("refNo"); // null (empty value to null number type)
+        LocalDate regDt = row.getLocalDate("regDt", "yyyy-MM-dd"); // null
     }
 }
 ```
