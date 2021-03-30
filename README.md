@@ -82,7 +82,7 @@ Feature: sample feature
 public class SampleStep {
     @Given("given table")
     public void given_table(io.cucumber.datatable.DataTable dataTable) {
-        DataTableWrap table = DataTableWrap.create(dataTable, "<null>");
+        DataTableWrap table = DataTableWrap.create(dataTable, "<null>"); // create with null marker
         List<MapRowWrap> rows = table.getMapRows();
         MapRowWrap row = rows.get(0);
         String name = row.getString("name"); // name == null   
