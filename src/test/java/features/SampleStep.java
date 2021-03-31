@@ -21,6 +21,9 @@ public class SampleStep {
         assertThat(name).isEqualTo("Independence Movement Day");
         LocalDate date = row.getLocalDate("date", "yyyy-MM-dd");
         assertThat(date).isEqualTo(LocalDate.of(1919, 3, 1));
+
+        MapRowWrap row2 = rows.get(1);
+        assertThat(row2.getLocalDate("date")).isEqualTo(LocalDate.now().minusDays(1));
     }
 
 }

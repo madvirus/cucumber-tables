@@ -30,22 +30,26 @@ public class MapRowWrap {
 
     public Integer getInteger(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Integer.valueOf(value.replace(",", ""));
+        return isNullOrEmpty(value) ? null : Integer.valueOf(removeComma(value));
+    }
+
+    private String removeComma(String value) {
+        return value.replace(",", "");
     }
 
     public Double getDouble(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Double.valueOf(value);
+        return isNullOrEmpty(value) ? null : Double.valueOf(removeComma(value));
     }
 
     public Long getLong(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Long.valueOf(value);
+        return isNullOrEmpty(value) ? null : Long.valueOf(removeComma(value));
     }
 
     public BigDecimal getBigDecimal(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : BigDecimal.valueOf(Double.valueOf(value));
+        return isNullOrEmpty(value) ? null : BigDecimal.valueOf(Double.valueOf(removeComma(value)));
     }
 
     public String getString(String colName) {
@@ -54,7 +58,12 @@ public class MapRowWrap {
 
     public LocalDate getLocalDate(String colName, String pattern) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+        if (isNullOrEmpty(value)) return null;
+        if (value.startsWith("D") || value.startsWith("d")) {
+            if (value.length() == 1) return LocalDate.now();
+            else return LocalDate.now().plusDays(Integer.parseInt(value.substring(1)));
+        }
+        return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
 
     public LocalDate getLocalDate(String colName) {

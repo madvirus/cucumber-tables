@@ -2,6 +2,15 @@
 
 cucumber-tables is utility library for cucumber DataTable.
 
+The following list is some features:
+
+* Get number type value from DataTable row
+* Get Temporal type type value from DataTable row
+* Support marker string for getting null
+* Support D-day format for LocalDate type
+* Support number format using comma for Integer, Long, Float, BigDecimal type
+
+
 ## Repository
 
 ### Maven
@@ -34,7 +43,6 @@ dependencies {
 }
 ```
 
-
 ## Using cucumber-tables
 
 ### Feature file using table
@@ -49,15 +57,24 @@ Feature: sample feature
 
 ### Using DataTableWrap in step definition code
 
+1. Create DataTableWrap
+2. get MapRowWrap list
+3. get value by using getXXX method of MapRowWrap
+
 ```
 public class SampleStep {
     @Given("given table")
     public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        // Create DataTableWrap
         DataTableWrap table = DataTableWrap.create(dataTable);
+        // get MapRowWrapList
         List<MapRowWrap> rows = table.getMapRows();
         MapRowWrap row = rows.get(0);
+        // get Integer value by using getInteger method of MapRowWrap
         Integer no = row.getInteger("no");
+        // get String value by using getString method of MapRowWrap
         String name = row.getString("name");
+        // get LocalDate value by using getLocalDate method of MapRowWrap
         LocalDate date = row.getLocalDate("date", "yyyy-MM-dd");
         Integer refno = row.getInteger("refNo"); // null (empty value to null number type)
         LocalDate regDt = row.getLocalDate("regDt", "yyyy-MM-dd"); // null
@@ -65,18 +82,26 @@ public class SampleStep {
 }
 ```
 
-## Using marker for null value
+## Using marker for null
+
+If you use null marker string as value of table cell,
+then DataTableWrap get null for null marker string. 
 
 ### feature file using null marker
+
+If null marker string is "`<null>`", you use "`<null>`" string for null. 
+
 ```
 Feature: sample feature
   Scenario: sample scenario
     Given given table
     | no | name    | date       |
-    | 1  | <null>> | 2021-03-31 |
+    | 1  | <null>  | 2021-03-31 |
 ```
 
 ### Using DataTableWrap in step definition code
+
+Use DataTableWrap.create(dataTable, "`<null>`"):
 
 ```
 public class SampleStep {
@@ -89,3 +114,65 @@ public class SampleStep {
     }
 }
 ```
+
+
+## Using comma for number type value
+
+### feature file using d-day format
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | num1 | num2  |
+    | 1234 | 1,234 |
+```
+
+### Using DataTableWrap in step definition code
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<MapRowWrap> rows = table.getMapRows();
+        MapRowWrap row = rows.get(0);
+        Integer num1 = row.getInteger("num1"); // 1234
+        Integer num2 = row.getInteger("num2"); // 1234
+    }
+}
+```
+
+
+
+
+## Using D-day format for LocalDate value
+MapRowWrap#getLocalDate() supports "D-day" format.
+
+### feature file using d-day format
+
+`D` means today. 
+
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | date1 | date2 | date3 |
+    | D+3   | D-3   | D     |
+```
+
+### Using DataTableWrap in step definition code
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable, "<null>"); // create with null marker
+        List<MapRowWrap> rows = table.getMapRows();
+        MapRowWrap row = rows.get(0);
+        LocalDate d1 = row.getLocalDate("date1"); // D+3 : LocalDate.now().plusDays(3);
+        LocalDate d2 = row.getLocalDate("date2"); // D-3 : LocalDate.now().minusDays(3);
+        LocalDate d3 = row.getLocalDate("date3"); // D : LocalDate.now();
+    }
+}
+```
+
