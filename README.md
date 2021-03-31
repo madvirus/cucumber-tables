@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.madvirus:cucumber-tables:0.1.0'
+    implementation 'com.github.madvirus:cucumber-tables:0.2.0'
 }
 ```
 
