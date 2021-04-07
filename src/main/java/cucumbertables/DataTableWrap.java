@@ -38,6 +38,13 @@ public class DataTableWrap {
                 .collect(Collectors.toList());
     }
 
+    public <T> List<T> getListAs(Class<? extends T> type) {
+        return dataTable.asMaps().stream()
+                .map(row -> new MapRowWrap(row, nullString, nullToEmpty))
+                .map(row -> row.convertTo(type))
+                .collect(Collectors.toList());
+    }
+
     public boolean containsColumn(String columnName) {
         List<String> headers = dataTable.row(0);
         return headers.stream().anyMatch(columnName::equals);

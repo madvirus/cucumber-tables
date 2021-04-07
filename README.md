@@ -28,7 +28,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.3.0'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.3.1'
 }
 ```
 
@@ -177,7 +177,7 @@ public class SampleStep {
 
 ## Converting row to object
 
-Use MapRowRap#convertTo method to convert row values to object:
+Use DataTableWrap#getListAs method to convert row values to object:
 
 ```
 Feature: sample feature
@@ -198,7 +198,22 @@ public class Member {
 public class SampleStep {
     @Given("given table")
     public void given_table(io.cucumber.datatable.DataTable dataTable) {
-        DataTableWrap table = DataTableWrap.create(dataTable, "<null>");
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<Member> members = table.getListAs(Member.class);
+        Member member = members.get(0);
+        assertThat(member.getName()).isEqualTo("bk");
+        assertThat(member.getAge()).isEqualTo(10);
+    }
+}
+```
+
+Or use MapRowRap#convertTo method to convert row values to object:
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable);
         List<MapRowWrap> rows = table.getMapRows();
         Member member = rows.get(0).convertTo(Member.class);
         assertThat(member.getName()).isEqualTo("bk");
