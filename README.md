@@ -9,6 +9,7 @@ The following list is some features:
 * Support marker string for getting null
 * Support D-day format for LocalDate type
 * Support number format using comma for Integer, Long, Float, BigDecimal type
+* Get object from DataTable row / Copy DataTable row values to object
 
 
 ## Repository
@@ -27,7 +28,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -40,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.2.0'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.3.0'
 }
 ```
 
@@ -60,7 +61,7 @@ Feature: sample feature
 
 1. Create DataTableWrap
 2. get MapRowWrap list
-3. get value by using getXXX method of MapRowWrap
+3. get value by using getXXX method of MapRowWrap or get object by convertTo/copyTo method of MapRowWrap
 
 ```
 public class SampleStep {
@@ -143,9 +144,6 @@ public class SampleStep {
 }
 ```
 
-
-
-
 ## Using D-day format for LocalDate value
 MapRowWrap#getLocalDate() supports "D-day" format.
 
@@ -177,3 +175,74 @@ public class SampleStep {
 }
 ```
 
+## Converting row to object
+
+Use MapRowRap#convertTo method to convert row values to object:
+
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | name | age |
+    | bk   | 10  |
+```
+
+```
+public class Member {
+    private String name;
+    private int age;
+    
+    // getter ...
+}
+
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable, "<null>");
+        List<MapRowWrap> rows = table.getMapRows();
+        Member member = rows.get(0).convertTo(Member.class);
+        assertThat(member.getName()).isEqualTo("bk");
+        assertThat(member.getAge()).isEqualTo(10);
+    }
+}
+```
+
+Or use MapRowRap#copyTo method to copy row values to existing object:
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<MapRowWrap> rows = table.getMapRows();
+        Member mem = new Member();
+        rows.get(0).copyTo(mem);
+        ...
+    }
+}
+```
+
+## DataTableWrap emptyToNull option
+
+If you use true of emptyToNull option, then empty string will be converted null:
+
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | name | desc |
+    | bk   |      |
+```
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable, true); // or DataTableWrap.create(dataTable, nullMarker, true); 
+        List<MapRowWrap> rows = table.getMapRows();
+        assertThat(rows.get(0).getString("desc")).isNull();
+    }
+}
+```
+
+Default value of emptyToNull is false.

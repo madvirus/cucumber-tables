@@ -28,6 +28,10 @@ public class DataTableWrap {
         return new DataTableWrap(dataTable, nullString, nullToEmpty);
     }
 
+    public static DataTableWrap create(DataTable dataTable, boolean nullToEmpty) {
+        return new DataTableWrap(dataTable, null, nullToEmpty);
+    }
+
     public List<MapRowWrap> getMapRows() {
         return dataTable.asMaps().stream()
                 .map(row -> new MapRowWrap(row, nullString, nullToEmpty))
