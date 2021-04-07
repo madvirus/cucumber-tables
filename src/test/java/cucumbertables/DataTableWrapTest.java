@@ -145,6 +145,16 @@ public class DataTableWrapTest {
     }
 
     @Test
+    void emptyToNull() {
+        DataTable dataTable = DataTable.create(Arrays.asList(
+                Arrays.asList("no", "name"),
+                Arrays.asList("1", "")
+        ));
+        DataTableWrap table = DataTableWrap.create(dataTable, "", true);
+        assertThat(table.getMapRows().get(0).getString("name")).isNull();
+    }
+
+    @Test
     void ignoreBlankNullString() {
         DataTable dataTable = DataTable.create(Arrays.asList(
                 Arrays.asList("no", "name"),
@@ -157,4 +167,14 @@ public class DataTableWrapTest {
         assertThat(rows.get(0).getString("name")).isEqualTo(" ");
     }
 
+    @Test
+    void containsColumn() {
+        DataTable dataTable = DataTable.create(Arrays.asList(
+                Arrays.asList("no", "name"),
+                Arrays.asList("1", " ")
+        ));
+        DataTableWrap table = DataTableWrap.create(dataTable, " ");
+        assertThat(table.containsColumn("name")).isTrue();
+        assertThat(table.containsColumn("name2")).isFalse();
+    }
 }
