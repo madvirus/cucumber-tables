@@ -2,81 +2,93 @@ package cucumbertables;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MapRowWrapTest {
     @Test
-    void convertTo() {
+    void stringValue() {
         HashMap<String, String> map = new HashMap<>();
         map.put("name", "cbk");
-        map.put("age", "10");
-        map.put("rate1", "10.3");
-        map.put("rate2", "");
-        MapRowWrap row = new MapRowWrap(map, "<null>");
-        Mem mem = row.convertTo(Mem.class);
-        assertThat(mem.getName()).isEqualTo("cbk");
-        assertThat(mem.getAge()).isEqualTo(10);
-        assertThat(mem.getRate1()).isEqualTo(10.3);
-        assertThat(mem.getRate2()).isNull();
+
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getString("name")).isEqualTo("cbk");
     }
 
     @Test
-    void copyTo() {
+    void numberValue() {
         HashMap<String, String> map = new HashMap<>();
-        map.put("name", "cbk");
-        map.put("age", "10");
-        map.put("rate2", "1.1");
+        map.put("integer", "1");
+        map.put("double", "0.123");
+        map.put("long", "12345");
+        map.put("comma", "12,345");
+
         MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getInteger("integer")).isEqualTo(Integer.valueOf(1));
+        assertThat(row.getDouble("double")).isEqualTo(Double.valueOf(0.123));
+        assertThat(row.getLong("long")).isEqualTo(Long.valueOf(12345));
+        assertThat(row.getBigDecimal("double")).isEqualTo(BigDecimal.valueOf(0.123));
 
-        Mem mem = new Mem();
-        mem.setName("before");
-        mem.setRate1(0.0);
-
-        row.copyTo(mem);
-        assertThat(mem.getName()).isEqualTo("cbk");
-        assertThat(mem.getAge()).isEqualTo(10);
-        assertThat(mem.getRate1()).isEqualTo(0.0);
-        assertThat(mem.getRate2()).isEqualTo(1.1);
+        assertThat(row.getInteger("comma")).isEqualTo(Integer.valueOf(12345));
+        assertThat(row.getLong("comma")).isEqualTo(Long.valueOf(12345));
+        assertThat(row.getDouble("comma")).isEqualTo(Double.valueOf(12345));
     }
 
-    public static class Mem {
-        private String name;
-        private int age;
-        private Double rate1;
-        private Double rate2;
+    @Test
+    void localDate() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("date1", "2021-03-31");
+        map.put("date2", "20210331");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalDate("date1")).isEqualTo(LocalDate.of(2021, 3, 31));
+        assertThat(row.getLocalDate("date1", "yyyy-MM-dd")).isEqualTo(LocalDate.of(2021, 3, 31));
+        assertThat(row.getLocalDate("date2", "yyyyMMdd")).isEqualTo(LocalDate.of(2021, 3, 31));
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public Double getRate1() {
-            return rate1;
-        }
-
-        public void setRate1(Double rate1) {
-            this.rate1 = rate1;
-        }
-
-        public Double getRate2() {
-            return rate2;
-        }
-
-        public void setRate2(Double rate2) {
-            this.rate2 = rate2;
-        }
     }
+
+    @Test
+    void localDate_DdayFormat() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("date1", "D");
+        map.put("date2", "D-5");
+        map.put("date3", "D+5");
+        map.put("date4", "d");
+        map.put("date5", "d-3");
+        map.put("date6", "d+3");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalDate("date1")).isEqualTo(LocalDate.now());
+        assertThat(row.getLocalDate("date2")).isEqualTo(LocalDate.now().minusDays(5));
+        assertThat(row.getLocalDate("date3")).isEqualTo(LocalDate.now().plusDays(5));
+        assertThat(row.getLocalDate("date4")).isEqualTo(LocalDate.now());
+        assertThat(row.getLocalDate("date5")).isEqualTo(LocalDate.now().minusDays(3));
+        assertThat(row.getLocalDate("date6")).isEqualTo(LocalDate.now().plusDays(3));
+    }
+
+    @Test
+    void localDateTime() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("datetime1", "2021-03-31 14:50:15");
+        map.put("datetime2", "20210331145015");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalDateTime("datetime1")).isEqualTo(LocalDateTime.of(2021, 3, 31, 14, 50, 15));
+        assertThat(row.getLocalDateTime("datetime1", "yyyy-MM-dd HH:mm:ss")).isEqualTo(LocalDateTime.of(2021, 3, 31, 14, 50, 15));
+        assertThat(row.getLocalDateTime("datetime2", "yyyyMMddHHmmss")).isEqualTo(LocalDateTime.of(2021, 3, 31, 14, 50, 15));
+    }
+
+    @Test
+    void localTime() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("time1", "14:50:15");
+        map.put("time2", "145015");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalTime("time1")).isEqualTo(LocalTime.of(14, 50, 15));
+        assertThat(row.getLocalTime("time1", "HH:mm:ss")).isEqualTo(LocalTime.of(14, 50, 15));
+        assertThat(row.getLocalTime("time2", "HHmmss")).isEqualTo(LocalTime.of(14, 50, 15));
+    }
+
 }
