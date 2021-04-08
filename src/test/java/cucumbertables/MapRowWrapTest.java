@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,6 +89,20 @@ public class MapRowWrapTest {
     }
 
     @Test
+    void localDate_DdayFormat_WithM() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("date1", "D-5M");
+        map.put("date2", "D+5M");
+        map.put("date3", "d-3M");
+        map.put("date4", "d+3M");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalDate("date1")).isEqualTo(LocalDate.now().plusMonths(-5));
+        assertThat(row.getLocalDate("date2")).isEqualTo(LocalDate.now().plusMonths(5));
+        assertThat(row.getLocalDate("date3")).isEqualTo(LocalDate.now().plusMonths(-3));
+        assertThat(row.getLocalDate("date4")).isEqualTo(LocalDate.now().plusMonths(3));
+    }
+
+    @Test
     void localDateTime() {
         HashMap<String, String> map = new HashMap<>();
         map.put("datetime1", "2021-03-31 14:50:15");
@@ -109,4 +124,27 @@ public class MapRowWrapTest {
         assertThat(row.getLocalTime("time2", "HHmmss")).isEqualTo(LocalTime.of(14, 50, 15));
     }
 
+    @Test
+    void yearMonth() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("month1", "2021-04");
+        map.put("month2", "202104");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getYearMonth("month1")).isEqualTo(YearMonth.of(2021, 4));
+        assertThat(row.getYearMonth("month2", "yyyyMM")).isEqualTo(YearMonth.of(2021, 4));
+    }
+
+    @Test
+    void yearMonth_Mformat() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("month1", "M");
+        map.put("month1-1", "M-0");
+        map.put("month2", "M+1");
+        map.put("month3", "M-1");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getYearMonth("month1")).isEqualTo(YearMonth.now());
+        assertThat(row.getYearMonth("month1-1")).isEqualTo(YearMonth.now());
+        assertThat(row.getYearMonth("month2")).isEqualTo(YearMonth.now().plusMonths(1));
+        assertThat(row.getYearMonth("month3")).isEqualTo(YearMonth.now().plusMonths(-1));
+    }
 }

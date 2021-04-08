@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -71,8 +72,13 @@ public class MapRowWrap {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
         if (ddayFormat(value)) {
-            if (value.length() == 1) return LocalDate.now();
-            else return LocalDate.now().plusDays(Integer.parseInt(value.substring(1)));
+            if (value.length() == 1) {
+                return LocalDate.now();
+            } else if (value.endsWith("M")) {
+                return LocalDate.now().plusMonths(Integer.parseInt(value.substring(1, value.length() - 1)));
+            } else {
+                return LocalDate.now().plusDays(Integer.parseInt(value.substring(1)));
+            }
         }
         return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
@@ -101,6 +107,24 @@ public class MapRowWrap {
 
     public LocalTime getLocalTime(String colName) {
         return getLocalTime(colName, "HH:mm:ss");
+    }
+
+    public YearMonth getYearMonth(String colName) {
+        return getYearMonth(colName, "yyyy-MM");
+    }
+
+    public YearMonth getYearMonth(String colName, String pattern) {
+        String value = getValue(colName);
+        if (isNullOrEmpty(value)) return null;
+        if (mmonthFormat(value)) {
+            if (value.length() == 1) return YearMonth.now();
+            else return YearMonth.now().plusMonths(Integer.parseInt(value.substring(1)));
+        }
+        return YearMonth.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private boolean mmonthFormat(String value) {
+        return value.startsWith("M") || value.startsWith("m");
     }
 
     public <T> T convertTo(Class<T> type) {
