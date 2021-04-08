@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Set;
 
 public class MapRowWrap {
     private Map<String, String> row;
@@ -42,26 +41,26 @@ public class MapRowWrap {
 
     public Integer getInteger(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Integer.valueOf(removeComma(value));
+        return isNullOrEmpty(value) ? null : Integer.valueOf(removeCommaOrUnderscore(value));
     }
 
-    private String removeComma(String value) {
-        return value.replace(",", "");
+    private String removeCommaOrUnderscore(String value) {
+        return value.replace(",", "").replace("_", "");
     }
 
     public Double getDouble(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Double.valueOf(removeComma(value));
+        return isNullOrEmpty(value) ? null : Double.valueOf(removeCommaOrUnderscore(value));
     }
 
     public Long getLong(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : Long.valueOf(removeComma(value));
+        return isNullOrEmpty(value) ? null : Long.valueOf(removeCommaOrUnderscore(value));
     }
 
     public BigDecimal getBigDecimal(String colName) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : BigDecimal.valueOf(Double.valueOf(removeComma(value)));
+        return isNullOrEmpty(value) ? null : BigDecimal.valueOf(Double.valueOf(removeCommaOrUnderscore(value)));
     }
 
     public String getString(String colName) {
@@ -76,11 +75,15 @@ public class MapRowWrap {
     public LocalDate getLocalDate(String colName, String pattern) {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
-        if (value.startsWith("D") || value.startsWith("d")) {
+        if (ddayFormat(value)) {
             if (value.length() == 1) return LocalDate.now();
             else return LocalDate.now().plusDays(Integer.parseInt(value.substring(1)));
         }
         return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private boolean ddayFormat(String value) {
+        return value.startsWith("D") || value.startsWith("d");
     }
 
     public LocalDate getLocalDate(String colName) {

@@ -27,6 +27,7 @@ public class MapRowWrapTest {
         map.put("double", "0.123");
         map.put("long", "12345");
         map.put("comma", "12,345");
+        map.put("underscore", "12_345");
 
         MapRowWrap row = new MapRowWrap(map);
         assertThat(row.getInteger("integer")).isEqualTo(Integer.valueOf(1));
@@ -37,6 +38,8 @@ public class MapRowWrapTest {
         assertThat(row.getInteger("comma")).isEqualTo(Integer.valueOf(12345));
         assertThat(row.getLong("comma")).isEqualTo(Long.valueOf(12345));
         assertThat(row.getDouble("comma")).isEqualTo(Double.valueOf(12345));
+
+        assertThat(row.getInteger("underscore")).isEqualTo(Integer.valueOf(12345));
     }
 
     @Test
@@ -48,7 +51,6 @@ public class MapRowWrapTest {
         assertThat(row.getLocalDate("date1")).isEqualTo(LocalDate.of(2021, 3, 31));
         assertThat(row.getLocalDate("date1", "yyyy-MM-dd")).isEqualTo(LocalDate.of(2021, 3, 31));
         assertThat(row.getLocalDate("date2", "yyyyMMdd")).isEqualTo(LocalDate.of(2021, 3, 31));
-
     }
 
     @Test
