@@ -101,4 +101,15 @@ public class DataTableWrapTest {
         assertThat(table.containsColumn("name")).isTrue();
         assertThat(table.containsColumn("name2")).isFalse();
     }
+
+    @Test
+    void columnNames() {
+        DataTable dataTable = DataTable.create(Arrays.asList(
+                Arrays.asList("no", "name", "etc"),
+                Arrays.asList("1", "", "")
+        ));
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<String> colNames = table.columnNames();
+        assertThat(colNames).containsExactly("no", "name", "etc");
+    }
 }

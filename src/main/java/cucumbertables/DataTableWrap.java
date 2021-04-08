@@ -2,6 +2,7 @@ package cucumbertables;
 
 import io.cucumber.datatable.DataTable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,5 +49,10 @@ public class DataTableWrap {
     public boolean containsColumn(String columnName) {
         List<String> headers = dataTable.row(0);
         return headers.stream().anyMatch(columnName::equals);
+    }
+
+    public List<String> columnNames() {
+        List<String> row = dataTable.row(0);
+        return Collections.unmodifiableList(row);
     }
 }
