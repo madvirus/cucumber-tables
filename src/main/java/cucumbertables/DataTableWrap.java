@@ -40,9 +40,13 @@ public class DataTableWrap {
     }
 
     public <T> List<T> getListAs(Class<? extends T> type) {
+        return getListAs(type, false);
+    }
+
+    public <T> List<T> getListAs(Class<? extends T> type, boolean errorWhenNotMatchName) {
         return dataTable.asMaps().stream()
                 .map(row -> new MapRowWrap(row, nullString, nullToEmpty))
-                .map(row -> row.convertTo(type))
+                .map(row -> row.convertTo(type, errorWhenNotMatchName))
                 .collect(Collectors.toList());
     }
 

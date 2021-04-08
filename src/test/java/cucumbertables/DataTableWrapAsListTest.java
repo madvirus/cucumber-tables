@@ -1,6 +1,7 @@
 package cucumbertables;
 
 import io.cucumber.datatable.DataTable;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -31,6 +32,21 @@ public class DataTableWrapAsListTest {
         assertThat(dateInfo0.getName()).isEqualTo("Independence Movement Day");
         assertThat(dateInfo0.getEtc()).isEqualTo("str13");
         assertThat(dateInfo0.getDate()).isEqualTo(LocalDate.of(1919, 3, 1));
+    }
+
+    @Test
+    void nameNotMatchingError() {
+        DataTable dataTable = DataTable.create(Arrays.asList(
+                Arrays.asList("no", "name", "etcx", "date"),
+                Arrays.asList("1", "Independence Movement Day", "str13", "1919-03-01"),
+                Arrays.asList("2", "null", "", ""),
+                Arrays.asList("", "value1", "value2", "")
+        ));
+        DataTableWrap table = DataTableWrap.create(dataTable);
+
+        Assertions.assertThatThrownBy(() -> table.getListAs(DateInfo.class, true))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("etcx");
     }
 
     public static class DateInfo {
