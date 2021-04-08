@@ -28,7 +28,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.3.5'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.3.6'
 }
 ```
 
