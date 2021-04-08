@@ -1,5 +1,6 @@
 package cucumbertables;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -39,6 +40,19 @@ public class MapRowWrapObjectTest {
         assertThat(mem.getAge()).isEqualTo(10);
         assertThat(mem.getRate1()).isEqualTo(0.0);
         assertThat(mem.getRate2()).isEqualTo(1.1);
+    }
+
+    @Test
+    void exceptionNotMatchingName() {
+        Assertions.assertThatThrownBy(() ->
+        {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("name1", "cbk");
+            MapRowWrap row = new MapRowWrap(map);
+            row.convertTo(Mem.class, true);
+        })
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("name1");
     }
 
     public static class Mem {

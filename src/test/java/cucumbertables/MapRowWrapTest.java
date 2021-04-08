@@ -21,6 +21,22 @@ public class MapRowWrapTest {
     }
 
     @Test
+    void stringEmptyValue() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("name", "");
+
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getString("name")).isEqualTo("");
+    }
+
+    @Test
+    void nullToEmptyString() {
+        HashMap<String, String> map = new HashMap<>();
+        MapRowWrap row = new MapRowWrap(map, "<null>", true);
+        assertThat(row.getString("name")).isEqualTo("");
+    }
+
+    @Test
     void numberValue() {
         HashMap<String, String> map = new HashMap<>();
         map.put("integer", "1");

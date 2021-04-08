@@ -69,13 +69,13 @@ public class DataTableWrapTest {
     }
 
     @Test
-    void emptyToNull() {
+    void nullToEmpty() {
         DataTable dataTable = DataTable.create(Arrays.asList(
                 Arrays.asList("no", "name"),
                 Arrays.asList("1", "")
         ));
         DataTableWrap table = DataTableWrap.create(dataTable, "", true);
-        assertThat(table.getMapRows().get(0).getString("name")).isNull();
+        assertThat(table.getMapRows().get(0).getString("name")).isEmpty();
     }
 
     @Test

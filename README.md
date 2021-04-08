@@ -237,9 +237,9 @@ public class SampleStep {
 }
 ```
 
-## DataTableWrap emptyToNull option
+## DataTableWrap nullToEmpty option
 
-If you use true of emptyToNull option, then empty string will be converted null:
+If you use true of nullToEmpty option, then null cell will be converted empty string:
 
 ```
 Feature: sample feature
@@ -255,9 +255,9 @@ public class SampleStep {
     public void given_table(io.cucumber.datatable.DataTable dataTable) {
         DataTableWrap table = DataTableWrap.create(dataTable, true); // or DataTableWrap.create(dataTable, nullMarker, true); 
         List<MapRowWrap> rows = table.getMapRows();
-        assertThat(rows.get(0).getString("desc")).isNull();
+        assertThat(rows.get(0).getString("desc")).isEmpty();
     }
 }
 ```
 
-Default value of emptyToNull is false.
+Default value of nullToEmpty is false.

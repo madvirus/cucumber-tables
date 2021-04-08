@@ -11,14 +11,14 @@ import java.util.Map;
 public class MapRowWrap {
     private Map<String, String> row;
     private String nullString;
-    private boolean emptyToNull;
+    private boolean nullToEmpty;
 
-    public MapRowWrap(Map<String, String> row, String nullString, boolean emptyToNull) {
+    public MapRowWrap(Map<String, String> row, String nullString, boolean nullToEmpty) {
         this.row = row;
         if (nullString != null && !nullString.trim().isEmpty()) {
             this.nullString = nullString.trim();
         }
-        this.emptyToNull = emptyToNull;
+        this.nullToEmpty = nullToEmpty;
     }
 
     public MapRowWrap(Map<String, String> row, String nullString) {
@@ -31,8 +31,8 @@ public class MapRowWrap {
 
     private String getValue(String colName) {
         String value = row.get(colName);
-        if (nullString == null) return value;
-        return nullString.equals(value) ? null : value;
+        if (value == null && nullToEmpty) return "";
+        return nullString != null && nullString.equals(value) ? null : value;
     }
 
     private boolean isNullOrEmpty(String value) {
@@ -64,12 +64,7 @@ public class MapRowWrap {
     }
 
     public String getString(String colName) {
-        String value = getValue(colName);
-        return emptyToNull && isEmpty(value) ? null : value;
-    }
-
-    private boolean isEmpty(String value) {
-        return value != null && value.isEmpty();
+        return getValue(colName);
     }
 
     public LocalDate getLocalDate(String colName, String pattern) {
@@ -109,21 +104,29 @@ public class MapRowWrap {
     }
 
     public <T> T convertTo(Class<T> type) {
+        return convertTo(type, false);
+    }
+
+    public <T> T convertTo(Class<T> type, boolean errorWhenNotMatchName) {
         T obj = null;
         try {
             obj = type.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        copyTo(type, obj);
+        copyTo(type, obj, errorWhenNotMatchName);
         return obj;
     }
 
     public <T> void copyTo(T obj) {
-        this.copyTo(obj.getClass(), obj);
+        this.copyTo(obj.getClass(), obj, false);
     }
 
-    private <T> void copyTo(Class<? extends T> type, T obj) {
+    public <T> void copyTo(T obj, boolean errorWhenNotMatchName) {
+        this.copyTo(obj.getClass(), obj, errorWhenNotMatchName);
+    }
+
+    private <T> void copyTo(Class<? extends T> type, T obj, boolean errorWhenNotMatchName) {
         for (String name : row.keySet()) {
             try {
                 Field field = type.getDeclaredField(name);
@@ -157,7 +160,9 @@ public class MapRowWrap {
                     throw new RuntimeException(e);
                 }
             } catch (NoSuchFieldException e) {
-                // ignore
+                if (errorWhenNotMatchName) {
+                    throw new IllegalArgumentException(String.format("not found '%s' field", name));
+                }
             }
         }
     }
