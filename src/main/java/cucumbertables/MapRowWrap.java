@@ -179,6 +179,8 @@ public class MapRowWrap {
                         field.set(obj, getLocalDateTime(name));
                     } else if (fieldType.isAssignableFrom(LocalTime.class)) {
                         field.set(obj, getLocalTime(name));
+                    } else if (fieldType.isAssignableFrom(YearMonth.class)) {
+                        field.set(obj, getYearMonth(name));
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
