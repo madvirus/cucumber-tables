@@ -28,7 +28,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.7</version>
+    <version>0.3.8</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -119,7 +119,7 @@ public class SampleStep {
 
 ## Using comma or underscore for number type value
 
-### feature file using d-day format
+### feature file using comma or underscore format
 ```
 Feature: sample feature
   Scenario: sample scenario
@@ -202,6 +202,36 @@ public class SampleStep {
         YearMonth m1 = row.getYearMonth("mon1"); // M+1 : YearMonth.now().plusMonths(1);
         YearMonth m2 = row.getYearMonth("mon2"); // M-1 : YearMonth.now().plusMonths(-1);
         YearMonth m3 = row.getYearMonth("mon3"); // M : YearMonth.now();
+    }
+}
+```
+
+## Using 'now' format for LocalDateTime, LocalTime value
+MapRowWrap#getLocalDateTime() and MapRowWrap#getLocalTime() supports "now" format.
+
+### feature file using d-day format
+
+`now` means current date & time. 
+
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | datetime | time |
+    | now      | now  |
+```
+
+### Using DataTableWrap in step definition code
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<MapRowWrap> rows = table.getMapRows();
+        MapRowWrap row = rows.get(0);
+        LocalDateTime now1 = row.getLocalDateTime("datetime"); // LocalDateTime.now()
+        LocalTime now2 = row.getLocalTime("time"); // LocalTime.now()
     }
 }
 ```

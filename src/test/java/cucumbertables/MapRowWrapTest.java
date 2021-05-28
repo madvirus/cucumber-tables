@@ -1,5 +1,6 @@
 package cucumbertables;
 
+import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,6 +116,17 @@ public class MapRowWrapTest {
     }
 
     @Test
+    void localDateTime_now() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("datetime1", "now");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalDateTime("datetime1")).isCloseTo(
+                LocalDateTime.now(),
+                new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)
+        );
+    }
+
+    @Test
     void localTime() {
         HashMap<String, String> map = new HashMap<>();
         map.put("time1", "14:50:15");
@@ -122,6 +135,16 @@ public class MapRowWrapTest {
         assertThat(row.getLocalTime("time1")).isEqualTo(LocalTime.of(14, 50, 15));
         assertThat(row.getLocalTime("time1", "HH:mm:ss")).isEqualTo(LocalTime.of(14, 50, 15));
         assertThat(row.getLocalTime("time2", "HHmmss")).isEqualTo(LocalTime.of(14, 50, 15));
+    }
+
+    @Test
+    void localTime_nowFormat() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("time1", "now");
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getLocalTime("time1")).isCloseTo(
+                LocalTime.now(), new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)
+        );
     }
 
     @Test

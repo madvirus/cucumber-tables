@@ -93,7 +93,13 @@ public class MapRowWrap {
 
     public LocalDateTime getLocalDateTime(String colName, String pattern) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : LocalDateTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+        if (isNullOrEmpty(value)) return null;
+        if (nowFormat(value)) return LocalDateTime.now();
+        return LocalDateTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private boolean nowFormat(String value) {
+        return "now".equalsIgnoreCase(value);
     }
 
     public LocalDateTime getLocalDateTime(String colName) {
@@ -102,7 +108,9 @@ public class MapRowWrap {
 
     public LocalTime getLocalTime(String colName, String pattern) {
         String value = getValue(colName);
-        return isNullOrEmpty(value) ? null : LocalTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+        if (isNullOrEmpty(value)) return null;
+        if (nowFormat(value)) return LocalTime.now();
+        return LocalTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
 
     public LocalTime getLocalTime(String colName) {
