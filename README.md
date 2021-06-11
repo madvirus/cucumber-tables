@@ -30,7 +30,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.8</version>
+    <version>0.3.9</version>
     <scope>test</scope>
 </dependency>
 ```
