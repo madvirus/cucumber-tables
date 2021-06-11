@@ -3,6 +3,7 @@ package cucumbertables;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,12 +16,14 @@ public class MapRowWrapObjectTest {
         map.put("age", "10");
         map.put("rate1", "10.3");
         map.put("rate2", "");
+        map.put("birth", "2021-06-11");
         MapRowWrap row = new MapRowWrap(map, "<null>");
         Mem mem = row.convertTo(Mem.class);
         assertThat(mem.getName()).isEqualTo("cbk");
         assertThat(mem.getAge()).isEqualTo(10);
         assertThat(mem.getRate1()).isEqualTo(10.3);
         assertThat(mem.getRate2()).isNull();
+        assertThat(mem.getBirth()).isEqualTo(LocalDate.of(2021, 6, 11));
     }
 
     @Test
@@ -29,6 +32,7 @@ public class MapRowWrapObjectTest {
         map.put("name", "cbk");
         map.put("age", "10");
         map.put("rate2", "1.1");
+        map.put("birth", "2021-06-11");
         MapRowWrap row = new MapRowWrap(map);
 
         Mem mem = new Mem();
@@ -40,6 +44,7 @@ public class MapRowWrapObjectTest {
         assertThat(mem.getAge()).isEqualTo(10);
         assertThat(mem.getRate1()).isEqualTo(0.0);
         assertThat(mem.getRate2()).isEqualTo(1.1);
+        assertThat(mem.getBirth()).isEqualTo(LocalDate.of(2021, 6, 11));
     }
 
     @Test
@@ -60,6 +65,7 @@ public class MapRowWrapObjectTest {
         private int age;
         private Double rate1;
         private Double rate2;
+        private LocalDate birth;
 
         public String getName() {
             return name;
@@ -91,6 +97,14 @@ public class MapRowWrapObjectTest {
 
         public void setRate2(Double rate2) {
             this.rate2 = rate2;
+        }
+
+        public LocalDate getBirth() {
+            return birth;
+        }
+
+        public void setBirth(LocalDate birth) {
+            this.birth = birth;
         }
     }
 }

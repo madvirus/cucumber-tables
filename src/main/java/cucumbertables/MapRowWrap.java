@@ -2,10 +2,7 @@ package cucumbertables;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -72,15 +69,14 @@ public class MapRowWrap {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
         if (ddayFormat(value)) {
-            if (value.length() == 1) {
-                return LocalDate.now();
-            } else if (value.endsWith("M")) {
-                return LocalDate.now().plusMonths(Integer.parseInt(value.substring(1, value.length() - 1)));
-            } else {
-                return LocalDate.now().plusDays(Integer.parseInt(value.substring(1)));
-            }
+            TimeDelta delta = parseDeltaFormat(value);
+            return LocalDate.now().plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta()).plusDays(delta.getDayDelta());
         }
         return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private TimeDelta parseDeltaFormat(String value) {
+        return DeltaFormatParser.parse(value);
     }
 
     private boolean ddayFormat(String value) {
@@ -125,14 +121,28 @@ public class MapRowWrap {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
         if (mmonthFormat(value)) {
-            if (value.length() == 1) return YearMonth.now();
-            else return YearMonth.now().plusMonths(Integer.parseInt(value.substring(1)));
+            TimeDelta delta = parseDeltaFormat(value);
+            return YearMonth.now().plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta());
         }
         return YearMonth.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
 
     private boolean mmonthFormat(String value) {
         return value.startsWith("M") || value.startsWith("m");
+    }
+
+    public Year getYear(String colName) {
+        String value = getValue(colName);
+        if (isNullOrEmpty(value)) return null;
+        if (yyearFormat(value)) {
+            TimeDelta delta = parseDeltaFormat(value);
+            return Year.now().plusYears(delta.getYearDelta());
+        }
+        return Year.of(Integer.parseInt(value));
+    }
+
+    private boolean yyearFormat(String value) {
+        return value.startsWith("Y") || value.startsWith("y");
     }
 
     public <T> T convertTo(Class<T> type) {
@@ -189,6 +199,8 @@ public class MapRowWrap {
                         field.set(obj, getLocalTime(name));
                     } else if (fieldType.isAssignableFrom(YearMonth.class)) {
                         field.set(obj, getYearMonth(name));
+                    } else if (fieldType.isAssignableFrom(Year.class)) {
+                        field.set(obj, getYear(name));
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
@@ -200,4 +212,5 @@ public class MapRowWrap {
             }
         }
     }
+
 }
