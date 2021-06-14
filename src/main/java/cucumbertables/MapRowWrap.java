@@ -69,10 +69,14 @@ public class MapRowWrap {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
         if (ddayFormat(value)) {
-            TimeDelta delta = parseDeltaFormat(value);
-            return LocalDate.now().plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta()).plusDays(delta.getDayDelta());
+            return getLocalDateFromDdayValue(value);
         }
         return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private LocalDate getLocalDateFromDdayValue(String value) {
+        TimeDelta delta = parseDeltaFormat(value);
+        return LocalDate.now().plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta()).plusDays(delta.getDayDelta());
     }
 
     private TimeDelta parseDeltaFormat(String value) {
@@ -91,6 +95,11 @@ public class MapRowWrap {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
         if (nowFormat(value)) return LocalDateTime.now();
+        if (ddayFormat(value)) {
+            int spIdx = value.indexOf(" ");
+            return getLocalDateFromDdayValue(value.substring(0, spIdx))
+                    .atTime(LocalTime.parse(value.substring(spIdx + 1), DateTimeFormatter.ofPattern("HH:mm:ss")));
+        }
         return LocalDateTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
 

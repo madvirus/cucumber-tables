@@ -30,7 +30,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.9</version>
+    <version>0.3.10</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -318,6 +318,41 @@ public class SampleStep {
         MapRowWrap row = rows.get(0);
         LocalDateTime now1 = row.getLocalDateTime("datetime"); // LocalDateTime.now()
         LocalTime now2 = row.getLocalTime("time"); // LocalTime.now()
+    }
+}
+```
+
+
+## Using D-day format for LocalDateTime value
+MapRowWrap#getLocalDateTime() supports "D-day" format.
+
+### D-day format
+
+Examples:
+* D 00:00:00: LocalDate.now().atTime(0, 0, 0)
+* D+1 13:50:45: LocalDate.now().plusDays(1).atTime(13, 50, 45)
+
+### feature file using d-day format
+
+```
+Feature: sample feature
+  Scenario: sample scenario
+    Given given table
+    | dt1        | dt2              |
+    | D 00:00:00 | D+1M-1D 12:00:00 |
+```
+
+### Using DataTableWrap in step definition code
+
+```
+public class SampleStep {
+    @Given("given table")
+    public void given_table(io.cucumber.datatable.DataTable dataTable) {
+        DataTableWrap table = DataTableWrap.create(dataTable);
+        List<MapRowWrap> rows = table.getMapRows();
+        MapRowWrap row = rows.get(0);
+        LocalDateTime dt1 = row.getLocalDateTime("dt1"); // LocalDate.now().atTime(0, 0, 0);
+        LocalDateTime dt2 = row.getLocalDate("dt2"); // D-3 : LocalDate.now().plusMonths(1).plusDays(-1).atTime(12, 0, 0);
     }
 }
 ```
