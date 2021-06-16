@@ -8,6 +8,7 @@ The following list is some features:
 * Get LocalDateTime, LocalDate, YearMonth, Year from DataTable row
 * Support marker string for getting null
 * Support D-day format for LocalDate type
+* Support M/day format for LocalDate type
 * Support M-month format for YearMonth type
 * Support Y-year format for Year type
 * Support now string for LocalDateTime, LocalTime type
@@ -30,7 +31,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.3.10</version>
+    <version>0.4.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -43,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.3.7'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.4.0'
 }
 ```
 
@@ -157,6 +158,12 @@ Feature: sample feature
     | 2021 | 2021-06   | 2021-06-11 | 2021-06-11 09:30:00 | 10:45:50  |
 ```
 
+Pattern:
+* YearMonth: yyyy-MM
+* LocalDate : yyyy-MM-dd
+* LocalDateTime : yyyy-MM-dd HH:mm:ss
+* LocalTime : HH:mm:ss
+
 ### Using DataTableWrap in step definition code
 
 ```
@@ -218,6 +225,18 @@ public class SampleStep {
 }
 ```
 
+## Using M/day format for LocalDate value
+MapRowWrap#getLocalDate() supports "M/day" format.
+
+### M/day format
+
+Examples:
+* M/1 : YearMonth.now().atDay(1)
+* M/15 : YearMonth.now().atDay(15)
+* M/15+3 : YearMonth.now().atDay(15).plusDays(3)
+* M/15-3D : YearMonth.now().atDay(15).minusDays(3)
+* M/15+3-1M : YearMonth.now().atDay(15).plusDays(3).minusMonths(1)
+
 ## Using M-month format for YearMonth value
 MapRowWrap#getYearMonth() supports "M-month" format.
 
@@ -272,8 +291,8 @@ Examples:
 Feature: sample feature
   Scenario: sample scenario
     Given given table
-    | mon1 | mon2 | mon3 |
-    | M+1  | M-1  | M    |
+    | y1  | y2  | y3 |
+    | Y+1 | Y-1 | Y  |
 ```
 
 ### Using DataTableWrap in step definition code
@@ -285,9 +304,9 @@ public class SampleStep {
         DataTableWrap table = DataTableWrap.create(dataTable);
         List<MapRowWrap> rows = table.getMapRows();
         MapRowWrap row = rows.get(0);
-        YearMonth m1 = row.getYearMonth("mon1"); // M+1 : YearMonth.now().plusMonths(1);
-        YearMonth m2 = row.getYearMonth("mon2"); // M-1 : YearMonth.now().plusMonths(-1);
-        YearMonth m3 = row.getYearMonth("mon3"); // M : YearMonth.now();
+        Year y1 = row.getYear("y1"); // Y+1 : Year.now().plusYears(1);
+        Year y2 = row.getYear("y2"); // Y-1 : Year.now().plusYears(-1);
+        Year y3 = row.getYear("y3"); // Y : Year.now();
     }
 }
 ```
@@ -356,6 +375,16 @@ public class SampleStep {
     }
 }
 ```
+
+## Using M/day format for LocalDateTime value
+MapRowWrap#getLocalDateTime() supports "M/day" format.
+
+### M/day format
+
+Examples:
+* M/1 13:15:00 : YearMonth.now().atDay(1).atTime(13, 15, 0)
+* M/15 10:20:30 : YearMonth.now().atDay(15).atTime(10, 20, 30)
+* M/15+3D-1M 09:45:55 : YearMonth.now().atDay(15).plusDays(3).minusMonths(1).atTime(9, 45, 55)
 
 ## DataTableWrap nullToEmpty option
 
