@@ -2,13 +2,13 @@ package cucumbertables;
 
 public class TimeDelta {
     private long yearDelta;
-    private long monthDetal;
-    private long dayDetal;
+    private long monthDelta;
+    private long dayDelta;
 
-    public TimeDelta(long yearDelta, long monthDetal, long dayDetal) {
+    public TimeDelta(long yearDelta, long monthDelta, long dayDelta) {
         this.yearDelta = yearDelta;
-        this.monthDetal = monthDetal;
-        this.dayDetal = dayDetal;
+        this.monthDelta = monthDelta;
+        this.dayDelta = dayDelta;
     }
 
     public long getYearDelta() {
@@ -16,11 +16,11 @@ public class TimeDelta {
     }
 
     public long getMonthDelta() {
-        return monthDetal;
+        return monthDelta;
     }
 
     public long getDayDelta() {
-        return dayDetal;
+        return dayDelta;
     }
 
     public static TimeDelta zero() {

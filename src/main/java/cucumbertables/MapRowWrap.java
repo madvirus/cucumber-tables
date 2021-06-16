@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MapRowWrap {
     private Map<String, String> row;
@@ -70,8 +72,18 @@ public class MapRowWrap {
         if (isNullOrEmpty(value)) return null;
         if (ddayFormat(value)) {
             return getLocalDateFromDdayValue(value);
+        } else if (mdayFormat(value)) {
+            return getLocalDateFromMdayValue(value);
         }
         return LocalDate.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
+    }
+
+    private boolean ddayFormat(String value) {
+        return value.startsWith("D") || value.startsWith("d");
+    }
+
+    private boolean mdayFormat(String value) {
+        return value.startsWith("M/") || value.startsWith("m/");
     }
 
     private LocalDate getLocalDateFromDdayValue(String value) {
@@ -79,12 +91,21 @@ public class MapRowWrap {
         return LocalDate.now().plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta()).plusDays(delta.getDayDelta());
     }
 
-    private TimeDelta parseDeltaFormat(String value) {
-        return DeltaFormatParser.parse(value);
+    private LocalDate getLocalDateFromMdayValue(String value) {
+        TimeDelta delta = parseDeltaFormat(value);
+        Pattern pattern = Pattern.compile("^[0-9]?[0-9]");
+        String rest = value.substring(2);
+        Matcher matcher = pattern.matcher(rest);
+        if (matcher.find()) {
+            int day = Integer.parseInt(rest.substring(matcher.start(), matcher.end()));
+            return YearMonth.now().atDay(day).plusYears(delta.getYearDelta()).plusMonths(delta.getMonthDelta()).plusDays(delta.getDayDelta());
+        } else {
+            throw new IllegalArgumentException("bad mday format: " + value);
+        }
     }
 
-    private boolean ddayFormat(String value) {
-        return value.startsWith("D") || value.startsWith("d");
+    private TimeDelta parseDeltaFormat(String value) {
+        return DeltaFormatParser.parse(value);
     }
 
     public LocalDate getLocalDate(String colName) {
@@ -98,6 +119,11 @@ public class MapRowWrap {
         if (ddayFormat(value)) {
             int spIdx = value.indexOf(" ");
             return getLocalDateFromDdayValue(value.substring(0, spIdx))
+                    .atTime(LocalTime.parse(value.substring(spIdx + 1), DateTimeFormatter.ofPattern("HH:mm:ss")));
+        }
+        if (mdayFormat(value)) {
+            int spIdx = value.indexOf(" ");
+            return getLocalDateFromMdayValue(value.substring(0, spIdx))
                     .atTime(LocalTime.parse(value.substring(spIdx + 1), DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
         return LocalDateTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));

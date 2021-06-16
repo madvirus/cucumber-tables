@@ -6,11 +6,20 @@ import java.util.regex.Pattern;
 
 public class DeltaFormatParser {
     public static TimeDelta parse(String s) {
-        if (s.length() <= 1) {
-            return TimeDelta.zero();
+        String defaultUnit;
+        if (s.startsWith("M/") || s.startsWith("m/")) {
+            defaultUnit = "D";
+        } else {
+            defaultUnit = s.substring(0, 1).toUpperCase();
         }
-        String defaultUnit = s.substring(0, 1).toUpperCase();
-        String deltaStr = s.substring(1);
+        int firstPlusIdx = s.indexOf("+");
+        int firstMinusIdx = s.indexOf("-");
+        if (firstPlusIdx == -1 && firstMinusIdx == -1) return TimeDelta.zero();
+        int deltaStartIdx = firstPlusIdx == -1 ? firstMinusIdx :
+            firstMinusIdx == -1 ? firstPlusIdx :
+            firstPlusIdx < firstMinusIdx ? firstPlusIdx : firstMinusIdx;
+
+        String deltaStr = s.substring(deltaStartIdx);
         Pattern pattern = Pattern.compile("([+-][1-9][0-9]*)([MDY])?");
         Matcher matcher = pattern.matcher(deltaStr);
 

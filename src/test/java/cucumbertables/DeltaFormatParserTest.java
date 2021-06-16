@@ -17,14 +17,8 @@ public class DeltaFormatParserTest {
     }
 
     @Test
-    void zeroDelta() {
-        TimeDelta delta = DeltaFormatParser.parse("D");
-        assertThat(delta.getDayDelta()).isZero();
-        assertThat(delta.getMonthDelta()).isZero();
-    }
-
-    @Test
     void dday() {
+        assertDelta("D", 0L, 0L, 0L);
         assertDelta("D+1", 0L, 0L, 1L);
         assertDelta("D-1", 0L, 0L, -1L);
         assertDelta("D+3D", 0L, 0L, 3L);
@@ -35,7 +29,15 @@ public class DeltaFormatParserTest {
     }
 
     @Test
+    void mday() {
+        assertDelta("M/1", 0L, 0L, 0L);
+        assertDelta("M/1+1", 0L, 0L, 1L);
+        assertDelta("M/1-3", 0L, 0L, -3L);
+    }
+
+    @Test
     void mmonth() {
+        assertDelta("M", 0L, 0L, 0L);
         assertDelta("M+1", 0L, 1L, 0L);
         assertDelta("M-1", 0L, -1L, 0L);
         assertDelta("M+3M", 0L, 3L, 0L);
@@ -45,6 +47,7 @@ public class DeltaFormatParserTest {
 
     @Test
     void yyear() {
+        assertDelta("Y", 0L, 0L, 0L);
         assertDelta("Y+1", 1L, 0L, 0L);
         assertDelta("Y-1", -1L, 0L, 0L);
         assertDelta("Y+5Y", 5L, 0L, 0L);

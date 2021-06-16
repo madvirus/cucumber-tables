@@ -38,6 +38,14 @@ public class MapRowWrapTemporalTypeTest {
         assertLocalDate("d+1Y", LocalDate.now().plusYears(1));
     }
 
+    @Test
+    void localDate_MdayFormat() {
+        assertLocalDate("M/5", YearMonth.now().atDay(5));
+        assertLocalDate("M/5+5", YearMonth.now().atDay(5).plusDays(5));
+        assertLocalDate("M/5+1M", YearMonth.now().atDay(5).plusMonths(1));
+        assertLocalDate("M/5-1Y", YearMonth.now().atDay(5).minusYears(1));
+    }
+
     private void assertLocalDate(String str, LocalDate expected) {
         HashMap<String, String> map = new HashMap<>();
         map.put("date1", str);
@@ -75,6 +83,12 @@ public class MapRowWrapTemporalTypeTest {
     void localDateTime_dday() {
         assertLocalDateTime("D 11:22:33", LocalDate.now().atTime(11, 22, 33));
         assertLocalDateTime("D+5 11:22:33", LocalDate.now().plusDays(5).atTime(11, 22, 33));
+    }
+
+    @Test
+    void localDateTime_mday() {
+        assertLocalDateTime("M/5 11:22:33", YearMonth.now().atDay(5).atTime(11, 22, 33));
+        assertLocalDateTime("M/5+15 11:22:33", YearMonth.now().atDay(5).plusDays(15).atTime(11, 22, 33));
     }
 
     private void assertLocalDateTime(String str, LocalDateTime expected) {
