@@ -314,7 +314,7 @@ public class SampleStep {
 ## Using 'now' format for LocalDateTime, LocalTime value
 MapRowWrap#getLocalDateTime() and MapRowWrap#getLocalTime() supports "now" format.
 
-### feature file using d-day format
+### feature file using now format
 
 `now` means current date & time. 
 
