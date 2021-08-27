@@ -43,7 +43,7 @@ public class MapRowWrapObjectTest {
         assertThat(mem.getName()).isEqualTo("cbk");
         assertThat(mem.getAge()).isEqualTo(10);
         assertThat(mem.getRate1()).isEqualTo(0.0);
-        assertThat(mem.getRate2()).isEqualTo(1.1);
+        assertThat(mem.getRate2()).isEqualTo(1.1f);
         assertThat(mem.getBirth()).isEqualTo(LocalDate.of(2021, 6, 11));
     }
 
@@ -64,7 +64,7 @@ public class MapRowWrapObjectTest {
         private String name;
         private int age;
         private Double rate1;
-        private Double rate2;
+        private Float rate2;
         private LocalDate birth;
 
         public String getName() {
@@ -91,11 +91,11 @@ public class MapRowWrapObjectTest {
             this.rate1 = rate1;
         }
 
-        public Double getRate2() {
+        public Float getRate2() {
             return rate2;
         }
 
-        public void setRate2(Double rate2) {
+        public void setRate2(Float rate2) {
             this.rate2 = rate2;
         }
 

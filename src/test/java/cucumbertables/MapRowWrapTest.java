@@ -45,12 +45,14 @@ public class MapRowWrapTest {
         MapRowWrap row = new MapRowWrap(map);
         assertThat(row.getInteger("integer")).isEqualTo(Integer.valueOf(1));
         assertThat(row.getDouble("double")).isEqualTo(Double.valueOf(0.123));
+        assertThat(row.getFloat("double")).isEqualTo(Float.valueOf(0.123f));
         assertThat(row.getLong("long")).isEqualTo(Long.valueOf(12345));
         assertThat(row.getBigDecimal("double")).isEqualTo(BigDecimal.valueOf(0.123));
 
         assertThat(row.getInteger("comma")).isEqualTo(Integer.valueOf(12345));
         assertThat(row.getLong("comma")).isEqualTo(Long.valueOf(12345));
         assertThat(row.getDouble("comma")).isEqualTo(Double.valueOf(12345));
+        assertThat(row.getFloat("comma")).isEqualTo(Float.valueOf(12345));
 
         assertThat(row.getInteger("underscore")).isEqualTo(Integer.valueOf(12345));
     }

@@ -53,6 +53,11 @@ public class MapRowWrap {
         return isNullOrEmpty(value) ? null : Double.valueOf(removeCommaOrUnderscore(value));
     }
 
+    public Float getFloat(String colName) {
+        String value = getValue(colName);
+        return isNullOrEmpty(value) ? null : Float.valueOf(removeCommaOrUnderscore(value));
+    }
+
     public Long getLong(String colName) {
         String value = getValue(colName);
         return isNullOrEmpty(value) ? null : Long.valueOf(removeCommaOrUnderscore(value));
@@ -224,6 +229,10 @@ public class MapRowWrap {
                         field.set(obj, getDouble(name));
                     } else if (fieldType == double.class) {
                         field.set(obj, getDouble(name));
+                    } else if (fieldType.isAssignableFrom(Float.class)) {
+                        field.set(obj, getFloat(name));
+                    } else if (fieldType == float.class) {
+                        field.set(obj, getFloat(name));
                     } else if (fieldType.isAssignableFrom(BigDecimal.class)) {
                         field.set(obj, getBigDecimal(name));
                     } else if (fieldType.isAssignableFrom(LocalDate.class)) {
