@@ -67,6 +67,7 @@ public class MapRowWrapTemporalTypeTest {
     @Test
     void localDateTime_now() {
         assertLocalDateTimeIsCloseTo("now", LocalDateTime.now());
+        assertLocalDateTimeIsCloseTo("now+1H", LocalDateTime.now().plusHours(1));
     }
 
     private void assertLocalDateTimeIsCloseTo(String str, LocalDateTime expected) {
@@ -113,9 +114,13 @@ public class MapRowWrapTemporalTypeTest {
     void localTime_nowFormat() {
         HashMap<String, String> map = new HashMap<>();
         map.put("time1", "now");
+        map.put("time2", "now+2H");
         MapRowWrap row = new MapRowWrap(map);
         assertThat(row.getLocalTime("time1")).isCloseTo(
                 LocalTime.now(), new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)
+        );
+        assertThat(row.getLocalTime("time2")).isCloseTo(
+                LocalTime.now().plusHours(2), new TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)
         );
     }
 

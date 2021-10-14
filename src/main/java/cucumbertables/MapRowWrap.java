@@ -120,7 +120,15 @@ public class MapRowWrap {
     public LocalDateTime getLocalDateTime(String colName, String pattern) {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
-        if (nowFormat(value)) return LocalDateTime.now();
+        if (nowFormat(value)) {
+            if (value.length() == 3) {
+                return LocalDateTime.now();
+            } else {
+                TimeDelta delta = parseDeltaFormat(value.substring(3));
+                long hourInc = delta.getHourDelta();
+                return LocalDateTime.now().plusHours(hourInc);
+            }
+        }
         if (ddayFormat(value)) {
             int spIdx = value.indexOf(" ");
             return getLocalDateFromDdayValue(value.substring(0, spIdx))
@@ -135,7 +143,7 @@ public class MapRowWrap {
     }
 
     private boolean nowFormat(String value) {
-        return "now".equalsIgnoreCase(value);
+        return value != null && value.startsWith("now");
     }
 
     public LocalDateTime getLocalDateTime(String colName) {
@@ -145,7 +153,15 @@ public class MapRowWrap {
     public LocalTime getLocalTime(String colName, String pattern) {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
-        if (nowFormat(value)) return LocalTime.now();
+        if (nowFormat(value)) {
+            if (value.length() == 3) {
+                return LocalTime.now();
+            } else {
+                TimeDelta delta = parseDeltaFormat(value.substring(3));
+                long hourInc = delta.getHourDelta();
+                return LocalTime.now().plusHours(hourInc);
+            }
+        }
         return LocalTime.parse(value.trim(), DateTimeFormatter.ofPattern(pattern));
     }
 

@@ -31,7 +31,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.4.1'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.4.2'
 }
 ```
 
@@ -322,8 +322,8 @@ MapRowWrap#getLocalDateTime() and MapRowWrap#getLocalTime() supports "now" forma
 Feature: sample feature
   Scenario: sample scenario
     Given given table
-    | datetime | time |
-    | now      | now  |
+    | datetime | time | datetime2 | time2  |
+    | now      | now  | now+2H    | now-2H |
 ```
 
 ### Using DataTableWrap in step definition code
@@ -335,8 +335,10 @@ public class SampleStep {
         DataTableWrap table = DataTableWrap.create(dataTable);
         List<MapRowWrap> rows = table.getMapRows();
         MapRowWrap row = rows.get(0);
-        LocalDateTime now1 = row.getLocalDateTime("datetime"); // LocalDateTime.now()
-        LocalTime now2 = row.getLocalTime("time"); // LocalTime.now()
+        LocalDateTime datetime = row.getLocalDateTime("datetime"); // LocalDateTime.now()
+        LocalTime time = row.getLocalTime("time"); // LocalTime.now()
+        LocalDateTime datetime2 = row.getLocalDateTime("datetime2"); // LocalTime.now().plusHours(2)
+        DateTime time2 = row.getLocalTime("time2"); // LocalTime.now().plusHours(-2)
     }
 }
 ```

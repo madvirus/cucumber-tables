@@ -20,12 +20,13 @@ public class DeltaFormatParser {
             firstPlusIdx < firstMinusIdx ? firstPlusIdx : firstMinusIdx;
 
         String deltaStr = s.substring(deltaStartIdx);
-        Pattern pattern = Pattern.compile("([+-][1-9][0-9]*)([MDY])?");
+        Pattern pattern = Pattern.compile("([+-][1-9][0-9]*)([MDYH])?");
         Matcher matcher = pattern.matcher(deltaStr);
 
         long yDelta = 0;
         long mDelta = 0;
         long dDelta = 0;
+        long hDelta = 0;
 
         int findStart = 0;
         while (matcher.find(findStart)) {
@@ -42,9 +43,11 @@ public class DeltaFormatParser {
                 mDelta = +delta;
             } else if ("Y".equals(unit)) {
                 yDelta += delta;
+            } else if ("H".equals(unit)) {
+                hDelta += delta;
             }
             findStart = matcher.end();
         }
-        return new TimeDelta(yDelta, mDelta, dDelta);
+        return new TimeDelta(yDelta, mDelta, dDelta, hDelta);
     }
 }
