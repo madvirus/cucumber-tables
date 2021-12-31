@@ -39,14 +39,14 @@ public class DataTableWrap {
                 .collect(Collectors.toList());
     }
 
-    public <T> List<T> getListAs(Class<? extends T> type) {
-        return getListAs(type, false);
+    public <T> List<T> getListAs(Class<? extends T> type, boolean errorWhenNotMatchName) {
+        return errorWhenNotMatchName ? getListAs(type, ConvertOptions.ERROR_ON_NO_MATCHING_NAME) : getListAs(type);
     }
 
-    public <T> List<T> getListAs(Class<? extends T> type, boolean errorWhenNotMatchName) {
+    public <T> List<T> getListAs(Class<? extends T> type, ConvertOptions ... options) {
         return dataTable.asMaps().stream()
                 .map(row -> new MapRowWrap(row, nullString, nullToEmpty))
-                .map(row -> row.convertTo(type, errorWhenNotMatchName))
+                .map(row -> row.convertTo(type, options))
                 .collect(Collectors.toList());
     }
 

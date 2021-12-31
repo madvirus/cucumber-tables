@@ -31,7 +31,7 @@ The following list is some features:
 <dependency>
     <groupId>com.github.madvirus</groupId>
     <artifactId>cucumber-tables</artifactId>
-    <version>0.4.2</version>
+    <version>0.5.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.github.madvirus:cucumber-tables:0.4.2'
+    testImplementation 'com.github.madvirus:cucumber-tables:0.5.0'
 }
 ```
 
@@ -473,4 +473,42 @@ public class SampleStep {
         ...
     }
 }
+```
+
+## convert options support
+
+* ERROR_ON_NO_MATCHING_NAME : error when no matching name found
+* UNDERSCORE_TO_CAMELCASE : convert underscored name of table to camelcased field name of object
+  * ex: address_detail --> addressDetail 
+
+### usage
+```java
+MapRowWrap row = new MapRowWrap(map, "<null>");
+Data data0 = row.convertTo(Data.class); // no options applied
+Data data1 = row.convertTo(Data.class, ConvertOptions.UNDERSCORE_TO_CAMELCASE);
+Data data2 = row.convertTo(Data.class, ConvertOptions.ERROR_ON_NO_MATCHING_NAME);
+Data data3 = row.convertTo(Data.class, 
+        ConvertOptions.ERROR_ON_NO_MATCHING_NAME,
+        ConvertOptions.UNDERSCORE_TO_CAMELCASE);
+```
+
+```java
+MapRowWrap row = new MapRowWrap(map, "<null>");
+Data data = new Data();
+Data data0 = row.copyTo(data); // no options applied
+Data data1 = row.copyTo(data, ConvertOptions.UNDERSCORE_TO_CAMELCASE);
+Data data2 = row.copyTo(data, ConvertOptions.ERROR_ON_NO_MATCHING_NAME);
+Data data3 = row.copyTo(data, 
+        ConvertOptions.ERROR_ON_NO_MATCHING_NAME,
+        ConvertOptions.UNDERSCORE_TO_CAMELCASE);
+```
+
+```
+DataTableWrap table = DataTableWrap.create(dataTable);
+List<DateInfo> infos0 = table.getListAs(DateInfo.class);
+List<DateInfo> infos1 = table.getListAs(DateInfo.class, ConvertOptions.UNDERSCORE_TO_CAMELCASE);
+List<DateInfo> infos2 = table.getListAs(DateInfo.class, ConvertOptions.ERROR_ON_NO_MATCHING_NAME);
+List<DateInfo> infos2 = table.getListAs(DateInfo.class,
+        ConvertOptions.ERROR_ON_NO_MATCHING_NAME,
+        ConvertOptions.UNDERSCORE_TO_CAMELCASE);
 ```

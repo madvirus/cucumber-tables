@@ -49,6 +49,21 @@ public class DataTableWrapAsListTest {
                 .hasMessageContaining("etcx");
     }
 
+    @Test
+    void nameNotMatchingErrorByOption() {
+        DataTable dataTable = DataTable.create(Arrays.asList(
+                Arrays.asList("no", "name", "etcx", "date"),
+                Arrays.asList("1", "Independence Movement Day", "str13", "1919-03-01"),
+                Arrays.asList("2", "null", "", ""),
+                Arrays.asList("", "value1", "value2", "")
+        ));
+        DataTableWrap table = DataTableWrap.create(dataTable);
+
+        Assertions.assertThatThrownBy(() -> table.getListAs(DateInfo.class, ConvertOptions.ERROR_ON_NO_MATCHING_NAME))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("etcx");
+    }
+
     public static class DateInfo {
         private Integer no;
         private String name;

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -201,33 +202,26 @@ public class MapRowWrap {
         return value.startsWith("Y") || value.startsWith("y");
     }
 
-    public <T> T convertTo(Class<T> type) {
-        return convertTo(type, false);
-    }
-
-    public <T> T convertTo(Class<T> type, boolean errorWhenNotMatchName) {
+    public <T> T convertTo(Class<T> type, ConvertOptions ... options) {
         T obj = null;
         try {
             obj = type.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        copyTo(type, obj, errorWhenNotMatchName);
+        copyTo(type, obj, options);
         return obj;
     }
 
-    public <T> void copyTo(T obj) {
-        this.copyTo(obj.getClass(), obj, false);
+    public <T> void copyTo(T obj, ConvertOptions ... options) {
+        this.copyTo(obj.getClass(), obj, options);
     }
 
-    public <T> void copyTo(T obj, boolean errorWhenNotMatchName) {
-        this.copyTo(obj.getClass(), obj, errorWhenNotMatchName);
-    }
-
-    private <T> void copyTo(Class<? extends T> type, T obj, boolean errorWhenNotMatchName) {
+    private <T> void copyTo(Class<? extends T> type, T obj, ConvertOptions ... options) {
+        int optionValue = Arrays.stream(options).mapToInt(opt -> opt.getValue()).sum();
         for (String name : row.keySet()) {
             try {
-                Field field = type.getDeclaredField(name);
+                Field field = type.getDeclaredField(getRealName(name, optionValue));
                 Class<?> fieldType = field.getType();
                 field.setAccessible(true);
                 try {
@@ -266,11 +260,31 @@ public class MapRowWrap {
                     throw new RuntimeException(e);
                 }
             } catch (NoSuchFieldException e) {
-                if (errorWhenNotMatchName) {
+                if (ConvertOptions.ERROR_ON_NO_MATCHING_NAME.match(optionValue)) {
                     throw new IllegalArgumentException(String.format("not found '%s' field", name));
                 }
             }
         }
+    }
+
+    private String getRealName(String name, int optionValue) {
+        if (ConvertOptions.UNDERSCORE_TO_CAMELCASE.match(optionValue)) {
+            StringBuilder builder = new StringBuilder();
+            boolean shouldConvertNextCharToUpper = false;
+            for (int i = 0; i < name.length(); i++) {
+                char currentChar = name.charAt(i);
+                if (currentChar == '_') {
+                    shouldConvertNextCharToUpper = true;
+                } else if (!shouldConvertNextCharToUpper) {
+                    builder.append(currentChar);
+                } else {
+                    builder.append(Character.toUpperCase(currentChar));
+                    shouldConvertNextCharToUpper = false;
+                }
+            }
+            return builder.toString();
+        }
+        return name;
     }
 
 }
