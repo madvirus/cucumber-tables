@@ -4,6 +4,7 @@ import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
@@ -151,7 +152,7 @@ public class MapRowWrapTemporalTypeTest {
 
     @Test
     void year() {
-        assertYear("2021", Year.now());
+        assertYear(Year.now().format(DateTimeFormatter.ofPattern("yyyy")), Year.now());
         assertYear("Y", Year.now());
         assertYear("Y+10", Year.now().plusYears(10));
         assertYear("Y-5Y", Year.now().plusYears(-5));

@@ -73,6 +73,11 @@ public class MapRowWrap {
         return getValue(colName);
     }
 
+    public Boolean getBoolean(String colName) {
+        String value = getValue(colName);
+        return isNullOrEmpty(value) ? null : Boolean.valueOf(value);
+    }
+
     public LocalDate getLocalDate(String colName, String pattern) {
         String value = getValue(colName);
         if (isNullOrEmpty(value)) return null;
@@ -255,6 +260,10 @@ public class MapRowWrap {
                         field.set(obj, getYearMonth(name));
                     } else if (fieldType.isAssignableFrom(Year.class)) {
                         field.set(obj, getYear(name));
+                    } else if (fieldType == boolean.class) {
+                        field.set(obj, getBoolean(name));
+                    } else if (fieldType.isAssignableFrom(Boolean.class)) {
+                        field.set(obj, getBoolean(name));
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
@@ -286,5 +295,4 @@ public class MapRowWrap {
         }
         return name;
     }
-
 }

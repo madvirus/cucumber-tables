@@ -56,4 +56,15 @@ public class MapRowWrapTest {
 
         assertThat(row.getInteger("underscore")).isEqualTo(Integer.valueOf(12345));
     }
+
+    @Test
+    void booleanValue() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("boolean1", "true");
+        map.put("boolean2", "false");
+
+        MapRowWrap row = new MapRowWrap(map);
+        assertThat(row.getBoolean("boolean1")).isTrue();
+        assertThat(row.getBoolean("boolean2")).isFalse();
+    }
 }

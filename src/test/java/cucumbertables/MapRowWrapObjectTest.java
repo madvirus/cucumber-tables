@@ -26,6 +26,8 @@ public class MapRowWrapObjectTest {
         map.put("localTime", "12:31:59");
         map.put("yearMonth", "2021-06");
         map.put("year", "2021");
+        map.put("boolean1", "true");
+        map.put("boolean2", "false");
 
         MapRowWrap row = new MapRowWrap(map, "<null>");
         Data data = row.convertTo(Data.class);
@@ -44,6 +46,8 @@ public class MapRowWrapObjectTest {
         assertThat(data.getLocalTime()).isEqualTo(LocalTime.of(12, 31, 59));
         assertThat(data.getYearMonth()).isEqualTo(YearMonth.of(2021, 6));
         assertThat(data.getYear()).isEqualTo(Year.of(2021));
+        assertThat(data.getBoolean1()).isTrue();
+        assertThat(data.getBoolean2()).isFalse();
     }
 
     @Test
@@ -134,6 +138,8 @@ public class MapRowWrapObjectTest {
         private YearMonth yearMonth;
         private Year year;
         private String addressDetail;
+        private boolean boolean1;
+        private boolean boolean2;
 
         public String getString() {
             return string;
@@ -253,6 +259,22 @@ public class MapRowWrapObjectTest {
 
         public void setAddressDetail(String addressDetail) {
             this.addressDetail = addressDetail;
+        }
+
+        public boolean getBoolean1() {
+            return boolean1;
+        }
+
+        public void setBoolean1(boolean boolean1) {
+            this.boolean1 = boolean1;
+        }
+
+        public boolean getBoolean2() {
+            return boolean2;
+        }
+
+        public void setBoolean2(boolean boolean2) {
+            this.boolean2 = boolean2;
         }
     }
 }
